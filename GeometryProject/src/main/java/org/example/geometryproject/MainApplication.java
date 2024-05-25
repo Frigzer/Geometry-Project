@@ -22,6 +22,7 @@ public class MainApplication extends Application {
     private double speed = 5.0;
     private double targetX, targetY;
     private Set<String> keysPressed = new HashSet<>();
+    private boolean controlModeRelativeToCursor = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -43,6 +44,9 @@ public class MainApplication extends Application {
 
         scene.setOnKeyPressed(event -> {
             keysPressed.add(event.getCode().toString());
+            if (event.getCode().toString().equals("SPACE")) {
+                controlModeRelativeToCursor = !controlModeRelativeToCursor; // Przełączanie trybu sterowania
+            }
         });
 
         scene.setOnKeyReleased(event -> {
@@ -52,7 +56,11 @@ public class MainApplication extends Application {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                movePlayer();
+                if (controlModeRelativeToCursor) {
+                    movePlayerRelativeToCursor();
+                } else {
+                    movePlayerClassic();
+                }
             }
         };
         timer.start();
@@ -89,7 +97,7 @@ public class MainApplication extends Application {
         player.setRotate(angle);
     }
 
-    private void movePlayer() {
+    private void movePlayerRelativeToCursor() {
         double deltaX = targetX - (player.getX() + player.getWidth() / 2);
         double deltaY = targetY - (player.getY() + player.getHeight() / 2);
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -113,6 +121,26 @@ public class MainApplication extends Application {
             player.setY(player.getY() - directionX * speed);
         }
 
+        double angle = Math.toDegrees(Math.atan2(deltaY, deltaX));
+        player.setRotate(angle);
+    }
+
+    private void movePlayerClassic() {
+        if (keysPressed.contains("W")) {
+            player.setY(player.getY() - speed);
+        }
+        if (keysPressed.contains("S")) {
+            player.setY(player.getY() + speed);
+        }
+        if (keysPressed.contains("A")) {
+            player.setX(player.getX() - speed);
+        }
+        if (keysPressed.contains("D")) {
+            player.setX(player.getX() + speed);
+        }
+
+        double deltaX = targetX - (player.getX() + player.getWidth() / 2);
+        double deltaY = targetY - (player.getY() + player.getHeight() / 2);
         double angle = Math.toDegrees(Math.atan2(deltaY, deltaX));
         player.setRotate(angle);
     }
