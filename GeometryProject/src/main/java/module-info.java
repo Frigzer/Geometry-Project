@@ -10,6 +10,7 @@ module org.example.geometryproject {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens org.example.geometryproject to javafx.fxml, javafx.graphics;
     exports org.example.geometryproject;
