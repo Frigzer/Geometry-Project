@@ -11,6 +11,6 @@ module org.example.geometryproject {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
 
-    opens org.example.geometryproject to javafx.fxml;
+    opens org.example.geometryproject to javafx.fxml, javafx.graphics;
     exports org.example.geometryproject;
 }
