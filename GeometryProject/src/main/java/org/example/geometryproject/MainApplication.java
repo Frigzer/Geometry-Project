@@ -15,8 +15,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.scene.input.MouseButton;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +33,9 @@ public class MainApplication extends Application {
     private Set<String> keysPressed = new HashSet<>();
     private boolean controlModeRelativeToCursor = false;
     private Point2D bowPoint;
+    private List<Bullet> bullets = new ArrayList<>();
+    private Pane root;
+    private double shipWidth, shipHeight;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,7 +43,7 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Pane root = new Pane();
+        root = new Pane();
         Scene scene = new Scene(root, 800, 600);
 
         // Przykład użycia klasy ConvexHull do utworzenia kształtu statku
@@ -57,8 +62,11 @@ public class MainApplication extends Application {
         player.setPreserveRatio(true); // Zachowanie proporcji obrazu
 
         // Ustawienie początkowej pozycji statku
-        player.setX(400 - player.getFitWidth() / 2); // Centrowanie statku na środku
-        player.setY(550 - player.getFitHeight() / 2); // Ustawienie statku na dole okna
+        player.setLayoutX(400 - player.getFitWidth() / 2); // Centrowanie statku na środku
+        player.setLayoutY(550 - player.getFitHeight() / 2); // Ustawienie statku na dole okna
+
+        shipWidth = player.getFitWidth();
+        shipHeight = player.getFitHeight();
 
         //player.setLayoutX(400);
         //player.setLayoutY(550);
@@ -68,10 +76,11 @@ public class MainApplication extends Application {
         targetX = player.getLayoutX();
         targetY = player.getLayoutY();
 
-        bowPoint = new Point2D(player.getX() + player.getFitWidth() / 2, player.getY());  // Zakładamy, że pierwszy punkt to dziób
+        bowPoint = new Point2D(player.getX() + player.getFitWidth() / 2, player.getY() + player.getFitHeight() / 2);  // Zakładamy, że pierwszy punkt to dziób
 
 
         scene.setOnMouseMoved(this::handleMouseMovement);
+        scene.setOnMousePressed(this::handleMousePressed);
 
         scene.setOnKeyPressed(event -> {
             keysPressed.add(event.getCode().toString());
@@ -92,6 +101,7 @@ public class MainApplication extends Application {
                 } else {
                     movePlayerClassic();
                 }
+                updateBullets();
             }
         };
         timer.start();
@@ -109,6 +119,57 @@ public class MainApplication extends Application {
     private void handleMouseMovement(MouseEvent event) {
         targetX = event.getX();
         targetY = event.getY();
+    }
+
+    private void handleMousePressed(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            fireBullets();
+        }
+    }
+
+    private void fireBullets() {
+        double angle = Math.toRadians(player.getRotate());
+        Point2D direction = new Point2D(Math.cos(angle), Math.sin(angle));
+
+        double bulletSpeed = 10.0;
+        Point2D velocity = direction.multiply(bulletSpeed);
+
+        double shipCenterX = player.getLayoutX() + shipWidth / 2;
+        double shipCenterY = player.getLayoutY() + shipHeight / 2;
+
+        // Wyznaczenie odległości od środka do skrzydeł
+        double wingOffset = shipWidth / 2 - 5;
+
+        // Pozycje wystrzałów z lewego i prawego skrzydła
+        Point2D leftWing = new Point2D(
+                shipCenterX + wingOffset * Math.cos(angle + Math.PI / 2),
+                shipCenterY + wingOffset * Math.sin(angle + Math.PI / 2)
+        );
+
+        Point2D rightWing = new Point2D(
+                shipCenterX + wingOffset * Math.cos(angle - Math.PI / 2),
+                shipCenterY + wingOffset * Math.sin(angle - Math.PI / 2)
+        );
+
+        Bullet leftBullet = new Bullet(leftWing.getX(), leftWing.getY(), velocity);
+        Bullet rightBullet = new Bullet(rightWing.getX(), rightWing.getY(), velocity);
+
+        bullets.add(leftBullet);
+        bullets.add(rightBullet);
+        root.getChildren().add(leftBullet);
+        root.getChildren().add(rightBullet);
+    }
+
+    private void updateBullets() {
+        for (int i = 0; i < bullets.size(); i++) {
+            Bullet bullet = bullets.get(i);
+            bullet.update();
+            if (bullet.isOffScreen(800, 600)) {
+                root.getChildren().remove(bullet);
+                bullets.remove(i);
+                i--;
+            }
+        }
     }
 
     /*
