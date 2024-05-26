@@ -34,6 +34,7 @@ public class MainApplication extends Application {
     private boolean controlModeRelativeToCursor = false;
     private Point2D bowPoint;
     private List<Bullet> bullets = new ArrayList<>();
+    private List<Asteroid> asteroids = new ArrayList<>();
     private Pane root;
     private double shipWidth, shipHeight;
 
@@ -102,6 +103,9 @@ public class MainApplication extends Application {
                     movePlayerClassic();
                 }
                 updateBullets();
+                updateAsteroids();
+                checkCollisions();
+                spawnAsteroids();
             }
         };
         timer.start();
@@ -172,24 +176,65 @@ public class MainApplication extends Application {
         }
     }
 
-    /*
-    private void moveTowardsTarget() {
-        double deltaX = targetX - (player.getX() + player.getWidth() / 2);
-        double deltaY = targetY - (player.getY() + player.getHeight() / 2);
-        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    private void spawnAsteroids() {
+        if (Math.random() < 0.02) { // Szansa na spawn asteroidy przy każdym wywołaniu
+            double x = Math.random() * 800;
+            double y = -20;
+            double angle = Math.random() * Math.PI / 4 - Math.PI / 8; // Losowy kąt od -22.5 do 22.5 stopni
+            Point2D velocity = new Point2D(Math.sin(angle), Math.cos(angle)).multiply(2);
 
-        if (distance > speed) {
-            double directionX = deltaX / distance;
-            double directionY = deltaY / distance;
+            Asteroid asteroid = new Asteroid(x, y, velocity);
+            asteroids.add(asteroid);
+            root.getChildren().add(asteroid);
+        }
+    }
 
-            player.setX(player.getX() + directionX * speed);
-            player.setY(player.getY() + directionY * speed);
+    private void updateAsteroids() {
+        for (int i = 0; i < asteroids.size(); i++) {
+            Asteroid asteroid = asteroids.get(i);
+            asteroid.update();
+            if (asteroid.isOffScreen(800, 600)) {
+                root.getChildren().remove(asteroid);
+                asteroids.remove(i);
+                i--;
+            }
+        }
+    }
+
+    private void checkCollisions() {
+        // Sprawdzanie kolizji statku z asteroidami
+        for (Asteroid asteroid : asteroids) {
+            if (player.getBoundsInParent().intersects(asteroid.getBoundsInParent())) {
+                // Koniec gry
+                stopGame();
+                return;
+            }
         }
 
-        double angle = Math.toDegrees(Math.atan2(deltaY, deltaX));
-        player.setRotate(angle);
+        // Sprawdzanie kolizji pocisków z asteroidami
+        for (int i = 0; i < bullets.size(); i++) {
+            Bullet bullet = bullets.get(i);
+            for (int j = 0; j < asteroids.size(); j++) {
+                Asteroid asteroid = asteroids.get(j);
+                if (bullet.getBoundsInParent().intersects(asteroid.getBoundsInParent())) {
+                    root.getChildren().remove(bullet);
+                    bullets.remove(i);
+                    i--;
+                    root.getChildren().remove(asteroid);
+                    asteroids.remove(j);
+                    j--;
+                    break;
+                }
+            }
+        }
     }
-     */
+
+    private void stopGame() {
+        // Zatrzymanie gry
+        System.out.println("Game Over");
+        System.exit(0);
+    }
+
 
     private void movePlayerRelativeToCursor() {
 
