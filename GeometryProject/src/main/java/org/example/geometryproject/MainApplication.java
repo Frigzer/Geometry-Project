@@ -7,6 +7,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -21,9 +22,10 @@ import java.util.List;
 import java.util.Set;
 
 public class MainApplication extends Application {
-    String shipFile = "craft1_ksztalt.txt";
+    String shipFile = "terran_wraith.txt";
 
-    private Polygon player;
+    //private Polygon player;
+    private ImageView player;
     private double speed = 5.0;
     private double targetX, targetY;
     private Set<String> keysPressed = new HashSet<>();
@@ -41,13 +43,22 @@ public class MainApplication extends Application {
 
         // Przykład użycia klasy ConvexHull do utworzenia kształtu statku
         ConvexHull convexHull = new ConvexHull(shipFile);
-
         List<Point2D> points = convexHull.getHull(); // Tworzymy kwadrat o wymiarach 50x50
-        player = new Polygon();
-        for (Point2D point : points) {
-            player.getPoints().addAll(point.getX(), point.getY());
-        }
-        player.setFill(Color.BLUE);
+
+        double[] hullDimensions = convexHull.getHullDimensions();
+        double hullWidth = hullDimensions[0];
+        double hullHeight = hullDimensions[1];
+
+        // Załadowanie obrazu statku
+        Image shipImage = new Image("terran_wraith_1.png");
+        player = new ImageView(shipImage);
+        player.setFitWidth(hullWidth); // Ustawienie szerokości statku na podstawie szerokości otoczki wypukłej
+        player.setFitHeight(hullHeight); // Ustawienie wysokości statku na podstawie wysokości otoczki wypukłej
+        player.setPreserveRatio(true); // Zachowanie proporcji obrazu
+
+        // Ustawienie początkowej pozycji statku
+        player.setX(400 - player.getFitWidth() / 2); // Centrowanie statku na środku
+        player.setY(550 - player.getFitHeight() / 2); // Ustawienie statku na dole okna
 
         //player.setLayoutX(400);
         //player.setLayoutY(550);
@@ -57,7 +68,7 @@ public class MainApplication extends Application {
         targetX = player.getLayoutX();
         targetY = player.getLayoutY();
 
-        bowPoint = new Point2D(player.getPoints().get(0), player.getPoints().get(1));  // Zakładamy, że pierwszy punkt to dziób
+        bowPoint = new Point2D(player.getX() + player.getFitWidth() / 2, player.getY());  // Zakładamy, że pierwszy punkt to dziób
 
 
         scene.setOnMouseMoved(this::handleMouseMovement);

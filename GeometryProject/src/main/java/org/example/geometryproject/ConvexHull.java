@@ -184,6 +184,24 @@ public class ConvexHull {
 
     }
 
+    public double[] getHullDimensions() {
+        double minX = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = Double.MIN_VALUE;
+
+        for (Point2D point : points) {
+            if (point.getX() < minX) minX = point.getX();
+            if (point.getX() > maxX) maxX = point.getX();
+            if (point.getY() < minY) minY = point.getY();
+            if (point.getY() > maxY) maxY = point.getY();
+        }
+
+        double width = maxX - minX;
+        double height = maxY - minY;
+        return new double[]{width, height};
+    }
+
     private void translate(double dx, double dy) {
         for (int i = 0; i < points.size(); i++) {
             Point2D point = points.get(i);
