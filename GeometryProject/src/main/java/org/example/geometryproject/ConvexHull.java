@@ -1,6 +1,8 @@
 package org.example.geometryproject;
 
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 
 import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
@@ -14,13 +16,15 @@ import java.util.Scanner;
 
 public class ConvexHull {
     List<Point2D> points;
-    List<Point2D> hull;
     Point2D center;
+    private List<HullLine> sides;
 
     public ConvexHull(String filename) {
         points = new ArrayList<>();
-        hull = new ArrayList<>();
+        sides = new ArrayList<>();
         loadPointsFromFile(filename);
+
+        calculateJarvis();
 
         double x0 = (findLeftmostPoint().getX() + findRightmostPoint().getX()) / 2;
         double y0 = (findTopmostPoint().getY() + findBottommostPoint().getY()) / 2;
@@ -28,73 +32,47 @@ public class ConvexHull {
         center = new Point(x0, y0);
 
         setPosition(400, 550);
-
-        calculateQuickHull();
     }
 
-    public void calculateQuickHull() {
+    public ConvexHull(List<Point2D> points) {
+        this.points = points;
+        sides = new ArrayList<>();
+        calculateJarvis();
+
+        double x0 = (findLeftmostPoint().getX() + findRightmostPoint().getX()) / 2;
+        double y0 = (findTopmostPoint().getY() + findBottommostPoint().getY()) / 2;
+
+        center = new Point(x0, y0);
+
+    }
+
+
+    public void calculateJarvis() {
         if (points.size() < 3)
             return;
 
-        Point2D leftmost = findLeftmostPoint();
-        Point2D rightmost = findRightmostPoint();
+        sides.clear();
 
-        hull.add(leftmost);
-        hull.add(rightmost);
-
-        List<Point2D> pointsAbove = new ArrayList<>();
-        List<Point2D> pointsBelow = new ArrayList<>();
-
-        for (Point2D p : points) {
-            if (quickOrientation(leftmost, rightmost, p) == 1)
-                pointsAbove.add(p);
-            else if (quickOrientation(leftmost, rightmost, p) == -1)
-                pointsBelow.add(p);
-        }
-
-        findHull(leftmost, rightmost, pointsAbove);
-        findHull(rightmost, leftmost, pointsBelow);
-
-        // Remove duplicate endpoints
-        hull = new ArrayList<>(new LinkedHashSet<>(hull));
+        Point2D startPoint = findLeftmostPoint();
+        Point2D currentPoint = startPoint;
+        do {
+            Point2D nextVertex = null;
+            for (Point2D vertex : points) {
+                if (vertex.equals(currentPoint))
+                    continue;
+                if (nextVertex == null || isClockwise(currentPoint, nextVertex, vertex)) {
+                    nextVertex = vertex;
+                }
+            }
+            sides.add(new HullLine(currentPoint,  nextVertex));
+            currentPoint = nextVertex;
+        } while (!currentPoint.equals(startPoint));
     }
 
-    private void findHull(Point2D p1, Point2D p2, List<Point2D> points) {
-        int index = hull.indexOf(p2);
-        if (points.size() == 0)
-            return;
 
-        if (points.size() == 1) {
-            hull.add(index, points.get(0));
-            return;
-        }
 
-        double maxDistance = 0;
-        int farthestPointIndex = -1;
-
-        for (int i = 0; i < points.size(); i++) {
-            double distance = findDistance(p1, p2, points.get(i));
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                farthestPointIndex = i;
-            }
-        }
-
-        Point2D farthestPoint = points.get(farthestPointIndex);
-        hull.add(index, farthestPoint);
-
-        List<Point2D> newPoints1 = new ArrayList<>();
-        List<Point2D> newPoints2 = new ArrayList<>();
-
-        for (Point2D point : points) {
-            if (quickOrientation(p1, farthestPoint, point) == 1)
-                newPoints1.add(point);
-            else if (quickOrientation(farthestPoint, p2, point) == 1)
-                newPoints2.add(point);
-        }
-
-        findHull(p1, farthestPoint, newPoints1);
-        findHull(farthestPoint, p2, newPoints2);
+    private boolean isClockwise(Point2D a, Point2D b, Point2D c) {
+        return (b.getX() - a.getX()) * (c.getY() - a.getY()) - (b.getY() - a.getY()) * (c.getX() - a.getX()) > 0;
     }
 
     private double findDistance(Point2D p1, Point2D p2, Point2D p) {
@@ -162,26 +140,32 @@ public class ConvexHull {
     public void setPosition(double x0, double y0) {
         Point2D topPoint = findTopmostPoint();
 
-        double angle = -Math.PI / 2;  // -90 stopni, aby skierować dziób do góry
+        double angle = -Math.PI / 2 ;  // -90 stopni, aby skierować dziób do góry
 
-        AffineTransform rotation = AffineTransform.getRotateInstance(angle, center.getX(), center.getY());
-
-        for (int i = 0; i < points.size(); i++) {
-            Point2D point = points.get(i);
-            double[] src = {point.getX(), point.getY()};
-            double[] dst = new double[2];
-            rotation.transform(src, 0, dst, 0, 1);
-            points.set(i, new Point2D(dst[0], dst[1]));
+        List<Point2D> rotatedPoints = new ArrayList<>();
+        for (Point2D point : points) {
+            double newX = center.getX() + (point.getX() - center.getX()) * Math.cos(angle) - (point.getY() - center.getY()) * Math.sin(angle);
+            double newY = center.getY() + (point.getX() - center.getX()) * Math.sin(angle) + (point.getY() - center.getY()) * Math.cos(angle);
+            rotatedPoints.add(new Point2D(newX, newY));
         }
+        points = rotatedPoints;
 
+        // Translacja punktów
+        double dx = x0 - center.getX();
+        double dy = y0 - center.getY();
+        translate(dx, dy);
 
+    }
 
-        double tempX = x0 - center.getX();
-        double tempY = y0 - center.getY();
-
-        translate(tempX, tempY);
-
-
+    public void rotate(double angle, Point2D center) {
+        List<Point2D> rotatedPoints = new ArrayList<>();
+        for (Point2D point : points) {
+            double newX = center.getX() + (point.getX() - center.getX()) * Math.cos(angle) - (point.getY() - center.getY()) * Math.sin(angle);
+            double newY = center.getY() + (point.getX() - center.getX()) * Math.sin(angle) + (point.getY() - center.getY()) * Math.cos(angle);
+            rotatedPoints.add(new Point2D(newX, newY));
+        }
+        points = rotatedPoints;
+        calculateJarvis();
     }
 
     public double[] getHullDimensions() {
@@ -202,15 +186,37 @@ public class ConvexHull {
         return new double[]{width, height};
     }
 
+    public List<Point2D> getHull() {
+        return points;
+    }
+
     private void translate(double dx, double dy) {
         for (int i = 0; i < points.size(); i++) {
             Point2D point = points.get(i);
             points.set(i, new Point2D(point.getX() + dx, point.getY() + dy));
         }
+        center = new Point2D(center.getX() + dx, center.getY() + dy);
     }
 
-    public List<Point2D> getHull() {
-        return hull;
+    public void updatePosition(double dx, double dy) {
+        for (int i = 0; i < points.size(); i++) {
+            Point2D point = points.get(i);
+            points.set(i, new Point2D(point.getX() + dx, point.getY() + dy));
+        }
+        calculateJarvis(); // Recalculate sides
+    }
+
+
+    public List<HullLine> getSides() {
+        return sides;
+    }
+
+    public Polygon toPolygon() {
+        Polygon polygon = new Polygon();
+        for (Point2D point : points) {
+            polygon.getPoints().addAll(point.getX(), point.getY());
+        }
+        return polygon;
     }
 
     public Point2D getLeftmostPoint() {
@@ -228,4 +234,30 @@ public class ConvexHull {
     public Point2D getBottommostPoint() {
         return findBottommostPoint();
     }
+
+    public boolean contains(double x, double y) {
+        int n = points.size();
+        boolean result = false;
+        for (int i = 0, j = n - 1; i < n; j = i++) {
+            if ((points.get(i).getY() > y) != (points.get(j).getY() > y) &&
+                    (x < (points.get(j).getX() - points.get(i).getX()) * (y - points.get(i).getY()) / (points.get(j).getY() - points.get(i).getY()) + points.get(i).getX())) {
+                result = !result;
+            }
+        }
+        return result;
+    }
+
+    /*
+    public void detectCollision(Point2D point, List<Line> sides, Pane root, double delay) {
+        for (Line side : sides) {
+            Line2D.Double line = new Line2D.Double(side.p1.getX(), side.p1.getY(), side.p2.getX(), side.p2.getY());
+            Point2D.Double point2D = new Point2D.Double(point.getX(), point.getY());
+            if (line.ptSegDist(point2D) <= 5) {
+
+
+                break;
+            }
+        }
+
+     */
 }
