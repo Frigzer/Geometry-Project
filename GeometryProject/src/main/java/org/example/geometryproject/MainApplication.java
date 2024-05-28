@@ -17,6 +17,12 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseButton;
+import javafx.application.Platform;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.util.Duration;
+import javafx.animation.PauseTransition;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +47,9 @@ public class MainApplication extends Application {
     private ConvexHull convexHull;
     private Polygon hullPolygon;
     private double previousAngle = 0;
+    private AnimationTimer timer;
+    private int score = 0;
+    private Text scoreText;
 
     public static void main(String[] args) {
         launch(args);
@@ -59,13 +68,12 @@ public class MainApplication extends Application {
         double hullWidth = hullDimensions[0];
         double hullHeight = hullDimensions[1];
 
-
         Image backgroundImage = new Image("earth.gif");
         ImageView backgroundImageView = new ImageView(backgroundImage);
         backgroundImageView.setFitWidth(800);
         backgroundImageView.setFitHeight(600);
         backgroundImageView.setPreserveRatio(false);
-        //root.getChildren().add(backgroundImageView);
+        root.getChildren().add(backgroundImageView);
 
         // Załadowanie obrazu statku
         Image shipImage = new Image("terran_wraith_1.png");
@@ -96,6 +104,13 @@ public class MainApplication extends Application {
 
         bowPoint = new Point2D(player.getX() + player.getFitWidth() / 2, player.getY() + player.getFitHeight() / 2);  // Zakładamy, że pierwszy punkt to dziób
 
+        // Inicjalizacja tekstu punktów
+        scoreText = new Text("Score: 0");
+        scoreText.setFont(new Font("Arial", 20));
+        scoreText.setFill(Color.WHITE);
+        scoreText.setX(10);
+        scoreText.setY(20);
+        root.getChildren().add(scoreText);
 
         scene.setOnMouseMoved(this::handleMouseMovement);
         scene.setOnMousePressed(this::handleMousePressed);
@@ -128,13 +143,13 @@ public class MainApplication extends Application {
                 // Usuwanie starych linii
                 root.getChildren().removeIf(node -> false);
 
-                /*
-                drawHullLines(convexHull, Color.RED);
-                for (Asteroid asteroid : asteroids) {
-                    drawHullLines(asteroid.getConvexHull(), Color.BLUE);
-                }
+            /*
+            drawHullLines(convexHull, Color.RED);
+            for (Asteroid asteroid : asteroids) {
+                drawHullLines(asteroid.getConvexHull(), Color.BLUE);
+            }
 
-                 */
+             */
             }
         };
         timer.start();
@@ -143,11 +158,11 @@ public class MainApplication extends Application {
         Image crosshairImage = new Image("crosshair.png");
         scene.setCursor(new ImageCursor(crosshairImage, crosshairImage.getWidth() / 2, crosshairImage.getHeight() / 2));
 
-
         primaryStage.setScene(scene);
         primaryStage.setTitle("Simple JavaFX Game");
         primaryStage.show();
     }
+
 
     private void handleMouseMovement(MouseEvent event) {
         targetX = event.getX();
@@ -232,12 +247,10 @@ public class MainApplication extends Application {
     }
 
     private void checkCollisions() {
-        // Sprawdzanie kolizji statku z asteroidami
         for (Asteroid asteroid : asteroids) {
             for (HullLine shipLine : convexHull.getSides()) {
                 for (HullLine asteroidLine : asteroid.getConvexHull().getSides()) {
                     if (linesIntersect(shipLine, asteroidLine)) {
-                        // Koniec gry
                         stopGame();
                         return;
                     }
@@ -245,7 +258,6 @@ public class MainApplication extends Application {
             }
         }
 
-        // Sprawdzanie kolizji pocisków z asteroidami
         for (int i = 0; i < bullets.size(); i++) {
             Bullet bullet = bullets.get(i);
             for (int j = 0; j < asteroids.size(); j++) {
@@ -258,6 +270,10 @@ public class MainApplication extends Application {
                         root.getChildren().remove(asteroid);
                         asteroids.remove(j);
                         j--;
+
+                        score++; // Zwiększenie punktów po zniszczeniu asteroidy
+                        updateScoreText(); // Aktualizacja tekstu punktów
+
                         break;
                     }
                 }
@@ -318,11 +334,26 @@ public class MainApplication extends Application {
         return false;
     }
 
+    private void updateScoreText() {
+        scoreText.setText("Score: " + score);
+    }
+
+    private void showGameOver() {
+        Text gameOverText = new Text("Game Over\n  Score: " + score);
+        gameOverText.setFont(new Font("Arial", 50));
+        gameOverText.setFill(Color.RED);
+        gameOverText.setX(275);
+        gameOverText.setY(275);
+        root.getChildren().add(gameOverText);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(4));
+        pause.setOnFinished(event -> Platform.exit());
+        pause.play();
+    }
 
     private void stopGame() {
-        // Zatrzymanie gry
-        System.out.println("Game Over");
-        System.exit(0);
+
+        showGameOver();
     }
 
 
@@ -397,7 +428,7 @@ public class MainApplication extends Application {
             player.setLayoutX(player.getLayoutX() + speed);
         }
 
-       // double deltaX = targetX - (player.getLayoutX() + player.getBoundsInParent().getWidth() / 2);
+        // double deltaX = targetX - (player.getLayoutX() + player.getBoundsInParent().getWidth() / 2);
         //double deltaY = targetY - (player.getLayoutY() + player.getBoundsInParent().getHeight() / 2);
 
         convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
