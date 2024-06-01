@@ -40,6 +40,7 @@ public class MainApplication extends Application {
             Scene scene = new Scene(root, screenWidth, screenHeight);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Main Menu");
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
