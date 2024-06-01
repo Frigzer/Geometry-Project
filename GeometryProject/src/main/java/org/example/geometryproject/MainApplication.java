@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.example.geometryproject.controller.MainMenuController;
+import org.example.geometryproject.main.Settings;
 
 import java.io.IOException;
 

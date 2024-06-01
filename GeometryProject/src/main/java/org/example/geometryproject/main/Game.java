@@ -1,7 +1,6 @@
-package org.example.geometryproject;
+package org.example.geometryproject.main;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.ImageCursor;
@@ -22,6 +21,10 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.animation.PauseTransition;
 import org.example.geometryproject.controller.PauseMenuController;
+import org.example.geometryproject.core.Asteroid;
+import org.example.geometryproject.core.Bullet;
+import org.example.geometryproject.core.ConvexHull;
+import org.example.geometryproject.utilities.HullLine;
 
 
 import java.io.IOException;
@@ -30,7 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GameApplication extends Application {
+public class Game {
     String shipFile = "terran_wraith.txt";
 
     private ImageView player;
@@ -62,7 +65,6 @@ public class GameApplication extends Application {
         return settings;
     }
 
-    @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         root = new Pane();
@@ -371,6 +373,9 @@ public class GameApplication extends Application {
 
     public void pauseGame() {
         isPaused = true;
+        root.getChildren().remove(pauseMenu);
+        root.getChildren().add(pauseMenu);
+
         pauseMenu.setVisible(true);
     }
 

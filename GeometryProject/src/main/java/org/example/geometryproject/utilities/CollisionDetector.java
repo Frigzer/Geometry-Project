@@ -1,10 +1,9 @@
-package org.example.geometryproject;
+package org.example.geometryproject.utilities;
 
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
-import java.awt.geom.Line2D;
 import java.util.List;
 
 public class CollisionDetector {

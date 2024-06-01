@@ -1,4 +1,4 @@
-package org.example.geometryproject;
+package org.example.geometryproject.main;
 
 public class Settings {
     private String controlMode = "Classic";

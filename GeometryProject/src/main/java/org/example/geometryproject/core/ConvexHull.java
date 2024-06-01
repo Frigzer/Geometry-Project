@@ -1,18 +1,15 @@
-package org.example.geometryproject;
+package org.example.geometryproject.core;
 
 import javafx.geometry.Point2D;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import org.example.geometryproject.utilities.HullLine;
+import org.example.geometryproject.utilities.Point;
 
-import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Scanner;
 
 public class ConvexHull {
     List<Point2D> points;

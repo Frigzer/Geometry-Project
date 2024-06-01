@@ -1,8 +1,7 @@
-package org.example.geometryproject;
+package org.example.geometryproject.core;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 
 import java.util.ArrayList;

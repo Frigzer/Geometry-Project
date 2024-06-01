@@ -5,8 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.example.geometryproject.GameApplication;
-import org.example.geometryproject.Settings;
+import org.example.geometryproject.main.Game;
+import org.example.geometryproject.main.Settings;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public class MainMenuController {
     @FXML
     private void startGame() {
         try {
-            GameApplication gameApp = new GameApplication();
+            Game gameApp = new Game();
             gameApp.setSettings(settings); // Przekazanie ustawień do gry
             gameApp.start(primaryStage);
         } catch (Exception e) {

@@ -5,26 +5,26 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.example.geometryproject.GameApplication;
+import org.example.geometryproject.main.Game;
 
 import java.io.IOException;
 
 public class PauseMenuController {
 
     private Stage primaryStage;
-    private GameApplication gameApplication;
+    private Game game;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
-    public void setGameApplication(GameApplication gameApplication) {
-        this.gameApplication = gameApplication;
+    public void setGameApplication(Game game) {
+        this.game = game;
     }
 
     @FXML
     private void resumeGame() {
-        gameApplication.resumeGame();
+        game.resumeGame();
     }
 
     @FXML
@@ -35,7 +35,7 @@ public class PauseMenuController {
 
             MainMenuController controller = loader.getController();
             controller.setPrimaryStage(primaryStage);
-            controller.setSettings(gameApplication.getSettings());
+            controller.setSettings(game.getSettings());
 
             Scene scene = new Scene(root, 800, 600);
             primaryStage.setScene(scene);

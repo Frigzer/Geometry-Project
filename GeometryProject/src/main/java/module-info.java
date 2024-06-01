@@ -16,4 +16,10 @@ module org.example.geometryproject {
     exports org.example.geometryproject;
     exports org.example.geometryproject.controller;
     opens org.example.geometryproject.controller to java.naming, javafx.controls, javafx.fxml, javafx.graphics;
+    exports org.example.geometryproject.core;
+    opens org.example.geometryproject.core to java.naming, javafx.controls, javafx.fxml, javafx.graphics;
+    exports org.example.geometryproject.utilities;
+    opens org.example.geometryproject.utilities to java.naming, javafx.controls, javafx.fxml, javafx.graphics;
+    exports org.example.geometryproject.main;
+    opens org.example.geometryproject.main to java.naming, javafx.controls, javafx.fxml, javafx.graphics;
 }
