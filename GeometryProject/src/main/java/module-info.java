@@ -12,6 +12,6 @@ module org.example.geometryproject {
     requires com.almasb.fxgl.all;
     requires java.desktop;
 
-    opens org.example.geometryproject to javafx.fxml, javafx.graphics, javafx.controls;
+    opens org.example.geometryproject to javafx.fxml, javafx.graphics, javafx.controls, java.naming;
     exports org.example.geometryproject;
 }
