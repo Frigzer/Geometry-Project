@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -20,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.animation.PauseTransition;
+import org.example.geometryproject.controller.PauseMenuController;
 
 
 import java.io.IOException;
@@ -49,6 +51,7 @@ public class GameApplication extends Application {
     private Text scoreText;
     private Settings settings;
     private boolean isPaused = false;
+    private VBox pauseMenu;
     private Stage primaryStage;
 
     public void setSettings(Settings settings) {
@@ -122,24 +125,20 @@ public class GameApplication extends Application {
         scene.setOnMousePressed(this::handleMousePressed);
 
         scene.setOnKeyPressed(event -> {
-            keysPressed.add(event.getCode().toString());
-            if (event.getCode().toString().equals("SPACE")) {
-                controlModeRelativeToCursor = !controlModeRelativeToCursor; // Przełączanie trybu sterowania
-            }
-        });
-
-        scene.setOnKeyPressed(event -> {
-            keysPressed.add(event.getCode().toString());
-            if (event.getCode().toString().equals("SPACE")) {
-                controlModeRelativeToCursor = !controlModeRelativeToCursor; // Przełączanie trybu sterowania
-            }
-            if (event.getCode().toString().equals("ESCAPE")) {
+            String code = event.getCode().toString();
+            keysPressed.add(code);
+            if (code.equals("ESCAPE")) {
                 if (isPaused) {
                     resumeGame();
                 } else {
                     pauseGame();
                 }
             }
+        });
+
+        scene.setOnKeyReleased(event -> {
+            String code = event.getCode().toString();
+            keysPressed.remove(code);
         });
 
         timer = new AnimationTimer() {
@@ -173,6 +172,9 @@ public class GameApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Simple JavaFX Game");
         primaryStage.show();
+
+        // Dodanie menu pauzy
+        addPauseMenu();
     }
 
 
@@ -364,30 +366,30 @@ public class GameApplication extends Application {
     }
 
     private void stopGame() {
-
         showGameOver();
     }
 
     public void pauseGame() {
         isPaused = true;
-        showPauseMenu();
+        pauseMenu.setVisible(true);
     }
 
     public void resumeGame() {
         isPaused = false;
+        pauseMenu.setVisible(false);
     }
 
-    private void showPauseMenu() {
+    private void addPauseMenu() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/PauseMenu.fxml"));
-            Pane root = loader.load();
+            pauseMenu = loader.load();
 
             PauseMenuController controller = loader.getController();
             controller.setPrimaryStage(primaryStage);
             controller.setGameApplication(this);
 
-            Scene scene = new Scene(root, 800, 600);
-            primaryStage.setScene(scene);
+            pauseMenu.setVisible(false); // Na początku menu pauzy jest ukryte
+            root.getChildren().add(pauseMenu);
         } catch (IOException e) {
             e.printStackTrace();
         }

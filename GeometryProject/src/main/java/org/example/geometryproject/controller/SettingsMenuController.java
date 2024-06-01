@@ -1,4 +1,4 @@
-package org.example.geometryproject;
+package org.example.geometryproject.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.example.geometryproject.Settings;
 
 import java.io.IOException;
 
