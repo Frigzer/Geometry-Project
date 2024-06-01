@@ -14,6 +14,8 @@ public class MainMenuController {
 
     private Stage primaryStage;
     private Settings settings;
+    private int screenWidth;
+    private int screenHeight;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -23,10 +25,15 @@ public class MainMenuController {
         this.settings = settings;
     }
 
+    public void setScreenDimensions(int screenWidth, int screenHeight) {
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
+    }
+
     @FXML
     private void startGame() {
         try {
-            Game gameApp = new Game();
+            Game gameApp = new Game(screenWidth, screenHeight);
             gameApp.setSettings(settings); // Przekazanie ustawień do gry
             gameApp.start(primaryStage);
         } catch (Exception e) {

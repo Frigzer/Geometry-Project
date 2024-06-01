@@ -56,6 +56,13 @@ public class Game {
     private boolean isPaused = false;
     private VBox pauseMenu;
     private Stage primaryStage;
+    private int screenWidth;
+    private int screenHeight;
+
+    public Game(int screenWidth, int screenHeight) {
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
+    }
 
     public void setSettings(Settings settings) {
         this.settings = settings;
@@ -80,7 +87,6 @@ public class Game {
 
         // Przykład użycia klasy ConvexHull do utworzenia kształtu statku
         convexHull = new ConvexHull(shipFile);
-        List<Point2D> points = convexHull.getHull(); // Tworzymy kwadrat o wymiarach 50x50
 
         double[] hullDimensions = convexHull.getHullDimensions();
         double hullWidth = hullDimensions[0];
@@ -94,8 +100,8 @@ public class Game {
         //player.setPreserveRatio(true); // Zachowanie proporcji obrazu
 
         // Ustawienie początkowej pozycji statku
-        player.setLayoutX(400 - player.getFitWidth() / 2); // Centrowanie statku na środku
-        player.setLayoutY(550 - player.getFitHeight() / 2); // Ustawienie statku na dole okna
+        player.setLayoutX((double) screenWidth / 2 - player.getFitWidth() / 2); // Centrowanie statku na środku
+        player.setLayoutY(screenHeight - player.getFitHeight()); // Ustawienie statku na dole okna
 
         shipWidth = player.getFitWidth();
         shipHeight = player.getFitHeight();
@@ -179,7 +185,6 @@ public class Game {
         addPauseMenu();
     }
 
-
     private void handleMouseMovement(MouseEvent event) {
         targetX = event.getX();
         targetY = event.getY();
@@ -228,7 +233,7 @@ public class Game {
         for (int i = 0; i < bullets.size(); i++) {
             Bullet bullet = bullets.get(i);
             bullet.update();
-            if (bullet.isOffScreen(800, 600)) {
+            if (bullet.isOffScreen(screenWidth, screenHeight)) {
                 root.getChildren().remove(bullet);
                 bullets.remove(i);
                 i--;
@@ -239,7 +244,7 @@ public class Game {
     private void spawnAsteroids() {
         if (Math.random() < 0.02) { // Szansa na spawn asteroidy przy każdym wywołaniu
             double x = Math.random() * 800;
-            double y = -20;
+            double y = -40;
             double size = 20 + Math.random() * 30; // Losowy rozmiar od 20 do 50
             double angle = Math.random() * Math.PI / 4 - Math.PI / 8; // Losowy kąt od -22.5 do 22.5 stopni
             Point2D velocity = new Point2D(Math.sin(angle), Math.cos(angle)).multiply(2);
@@ -254,7 +259,7 @@ public class Game {
         for (int i = 0; i < asteroids.size(); i++) {
             Asteroid asteroid = asteroids.get(i);
             asteroid.update();
-            if (asteroid.isOffScreen(800, 600)) {
+            if (asteroid.getLayoutY() > screenHeight + 100) {
                 root.getChildren().remove(asteroid);
                 asteroids.remove(i);
                 i--;
@@ -400,7 +405,6 @@ public class Game {
         }
     }
 
-
     private void movePlayerRelativeToCursor() {
         Point2D currentBowPoint = player.localToParent(bowPoint);
 
@@ -411,36 +415,52 @@ public class Game {
         double directionY = deltaY / distance;
 
         if (keysPressed.contains(settings.getMoveUpKey())) {
-            double oldX = player.getLayoutX();
-            double oldY = player.getLayoutY();
-            player.setLayoutX(player.getLayoutX() + directionX * speed);
-            player.setLayoutY(player.getLayoutY() + directionY * speed);
-            convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
-            updateHullPolygon();
+            double newX = player.getLayoutX() + directionX * speed;
+            double newY = player.getLayoutY() + directionY * speed;
+            if (newX >= 0 && newX + shipWidth <= screenWidth && newY >= 0 && newY + shipHeight <= screenHeight) {
+                double oldX = player.getLayoutX();
+                double oldY = player.getLayoutY();
+                player.setLayoutX(newX);
+                player.setLayoutY(newY);
+                convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
+                updateHullPolygon();
+            }
         }
         if (keysPressed.contains(settings.getMoveDownKey())) {
-            double oldX = player.getLayoutX();
-            double oldY = player.getLayoutY();
-            player.setLayoutX(player.getLayoutX() - directionX * speed);
-            player.setLayoutY(player.getLayoutY() - directionY * speed);
-            convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
-            updateHullPolygon();
+            double newX = player.getLayoutX() - directionX * speed;
+            double newY = player.getLayoutY() - directionY * speed;
+            if (newX >= 0 && newX + shipWidth <= screenWidth && newY >= 0 && newY + shipHeight <= screenHeight) {
+                double oldX = player.getLayoutX();
+                double oldY = player.getLayoutY();
+                player.setLayoutX(newX);
+                player.setLayoutY(newY);
+                convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
+                updateHullPolygon();
+            }
         }
         if (keysPressed.contains(settings.getMoveRightKey())) {
-            double oldX = player.getLayoutX();
-            double oldY = player.getLayoutY();
-            player.setLayoutX(player.getLayoutX() + directionY * speed);
-            player.setLayoutY(player.getLayoutY() - directionX * speed);
-            convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
-            updateHullPolygon();
+            double newX = player.getLayoutX() + directionY * speed;
+            double newY = player.getLayoutY() - directionX * speed;
+            if (newX >= 0 && newX + shipWidth <= screenWidth && newY >= 0 && newY + shipHeight <= screenHeight) {
+                double oldX = player.getLayoutX();
+                double oldY = player.getLayoutY();
+                player.setLayoutX(newX);
+                player.setLayoutY(newY);
+                convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
+                updateHullPolygon();
+            }
         }
         if (keysPressed.contains(settings.getMoveLeftKey())) {
-            double oldX = player.getLayoutX();
-            double oldY = player.getLayoutY();
-            player.setLayoutX(player.getLayoutX() - directionY * speed);
-            player.setLayoutY(player.getLayoutY() + directionX * speed);
-            convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
-            updateHullPolygon();
+            double newX = player.getLayoutX() - directionY * speed;
+            double newY = player.getLayoutY() + directionX * speed;
+            if (newX >= 0 && newX + shipWidth <= screenWidth && newY >= 0 && newY + shipHeight <= screenHeight) {
+                double oldX = player.getLayoutX();
+                double oldY = player.getLayoutY();
+                player.setLayoutX(newX);
+                player.setLayoutY(newY);
+                convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
+                updateHullPolygon();
+            }
         }
 
         double angle = Math.toDegrees(Math.atan2(deltaY, deltaX));
@@ -457,16 +477,24 @@ public class Game {
         double oldY = player.getLayoutY();
 
         if (keysPressed.contains(settings.getMoveUpKey())) {
-            player.setLayoutY(player.getLayoutY() - speed);
+            if (player.getLayoutY() - speed >= 0) {
+                player.setLayoutY(player.getLayoutY() - speed);
+            }
         }
         if (keysPressed.contains(settings.getMoveDownKey())) {
-            player.setLayoutY(player.getLayoutY() + speed);
+            if (player.getLayoutY() + speed + shipHeight <= screenHeight) {
+                player.setLayoutY(player.getLayoutY() + speed);
+            }
         }
         if (keysPressed.contains(settings.getMoveLeftKey())) {
-            player.setLayoutX(player.getLayoutX() - speed);
+            if (player.getLayoutX() - speed >= 0) {
+                player.setLayoutX(player.getLayoutX() - speed);
+            }
         }
         if (keysPressed.contains(settings.getMoveRightKey())) {
-            player.setLayoutX(player.getLayoutX() + speed);
+            if (player.getLayoutX() + speed + shipWidth <= screenWidth) {
+                player.setLayoutX(player.getLayoutX() + speed);
+            }
         }
 
         convexHull.updatePosition(player.getLayoutX() - oldX, player.getLayoutY() - oldY);
@@ -491,19 +519,6 @@ public class Game {
         for (Point2D point : convexHull.getHull()) {
             hullPolygon.getPoints().addAll(point.getX(), point.getY());
         }
-    }
-
-    private double calculateAngle(Point2D from, Point2D to) {
-        double deltaX = to.getX() - from.getX();
-        double deltaY = to.getY() - from.getY();
-        return Math.toDegrees(Math.atan2(deltaY, deltaX));
-    }
-
-    private Point2D getBowPoint() {
-        // Zakładamy, że dziób statku to najbardziej wysunięty punkt otoczki wypukłej
-        // W tym przykładzie używamy prawego punktu jako dziobu
-        ConvexHull convexHull = new ConvexHull(shipFile);
-        return convexHull.getTopmostPoint();
     }
 
     private void drawHullLines(ConvexHull hull, Color color) {

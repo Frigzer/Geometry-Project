@@ -12,7 +12,11 @@ import java.io.IOException;
 
 public class MainApplication extends Application {
 
+    private static final int screenWidth = 800;
+    private static final int screenHeight = 600;
+
     private Settings settings = new Settings();
+
 
     public static void main(String[] args) {
         launch(args);
@@ -31,8 +35,9 @@ public class MainApplication extends Application {
             MainMenuController controller = loader.getController();
             controller.setPrimaryStage(primaryStage);
             controller.setSettings(settings);
+            controller.setScreenDimensions(screenWidth, screenHeight);
 
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, screenWidth, screenHeight);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Main Menu");
             primaryStage.show();
