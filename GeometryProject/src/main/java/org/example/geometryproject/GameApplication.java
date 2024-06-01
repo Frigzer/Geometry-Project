@@ -2,6 +2,7 @@ package org.example.geometryproject;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
@@ -21,6 +22,7 @@ import javafx.util.Duration;
 import javafx.animation.PauseTransition;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,15 +48,30 @@ public class GameApplication extends Application {
     private int score = 0;
     private Text scoreText;
     private Settings settings;
+    private boolean isPaused = false;
+    private Stage primaryStage;
 
     public void setSettings(Settings settings) {
         this.settings = settings;
     }
 
+    public Settings getSettings() {
+        return settings;
+    }
+
     @Override
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         root = new Pane();
         Scene scene = new Scene(root, 800, 600);
+
+        // Ustawienie tła
+        Image backgroundImage = new Image("earth.gif");
+        ImageView backgroundImageView = new ImageView(backgroundImage);
+        backgroundImageView.setFitWidth(800);
+        backgroundImageView.setFitHeight(600);
+        backgroundImageView.setPreserveRatio(false);
+        root.getChildren().add(backgroundImageView);
 
         // Przykład użycia klasy ConvexHull do utworzenia kształtu statku
         convexHull = new ConvexHull(shipFile);
@@ -63,13 +80,6 @@ public class GameApplication extends Application {
         double[] hullDimensions = convexHull.getHullDimensions();
         double hullWidth = hullDimensions[0];
         double hullHeight = hullDimensions[1];
-
-        Image backgroundImage = new Image("earth.gif");
-        ImageView backgroundImageView = new ImageView(backgroundImage);
-        backgroundImageView.setFitWidth(800);
-        backgroundImageView.setFitHeight(600);
-        backgroundImageView.setPreserveRatio(false);
-        root.getChildren().add(backgroundImageView);
 
         // Załadowanie obrazu statku
         Image shipImage = new Image("terran_wraith_1.png");
@@ -118,34 +128,40 @@ public class GameApplication extends Application {
             }
         });
 
-        scene.setOnKeyReleased(event -> {
-            keysPressed.remove(event.getCode().toString());
+        scene.setOnKeyPressed(event -> {
+            keysPressed.add(event.getCode().toString());
+            if (event.getCode().toString().equals("SPACE")) {
+                controlModeRelativeToCursor = !controlModeRelativeToCursor; // Przełączanie trybu sterowania
+            }
+            if (event.getCode().toString().equals("ESCAPE")) {
+                if (isPaused) {
+                    resumeGame();
+                } else {
+                    pauseGame();
+                }
+            }
         });
 
-        AnimationTimer timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (controlModeRelativeToCursor) {
-                    movePlayerRelativeToCursor();
+                if (settings != null && settings.getControlMode().equals("Relative to Cursor")) {
+                    controlModeRelativeToCursor = true;
                 } else {
-                    movePlayerClassic();
+                    controlModeRelativeToCursor = false;
                 }
-                updateBullets();
-                updateAsteroids();
-                updateHullPolygon();
-                checkCollisions();
-                spawnAsteroids();
-
-                // Usuwanie starych linii
-                root.getChildren().removeIf(node -> false);
-
-            /*
-            drawHullLines(convexHull, Color.RED);
-            for (Asteroid asteroid : asteroids) {
-                drawHullLines(asteroid.getConvexHull(), Color.BLUE);
-            }
-
-             */
+                if (!isPaused) {
+                    if (controlModeRelativeToCursor) {
+                        movePlayerRelativeToCursor();
+                    } else {
+                        movePlayerClassic();
+                    }
+                    updateBullets();
+                    updateAsteroids();
+                    updateHullPolygon();
+                    checkCollisions();
+                    spawnAsteroids();
+                }
             }
         };
         timer.start();
@@ -350,6 +366,31 @@ public class GameApplication extends Application {
     private void stopGame() {
 
         showGameOver();
+    }
+
+    public void pauseGame() {
+        isPaused = true;
+        showPauseMenu();
+    }
+
+    public void resumeGame() {
+        isPaused = false;
+    }
+
+    private void showPauseMenu() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/PauseMenu.fxml"));
+            Pane root = loader.load();
+
+            PauseMenuController controller = loader.getController();
+            controller.setPrimaryStage(primaryStage);
+            controller.setGameApplication(this);
+
+            Scene scene = new Scene(root, 800, 600);
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
