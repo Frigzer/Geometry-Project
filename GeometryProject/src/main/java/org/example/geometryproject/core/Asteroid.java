@@ -1,7 +1,9 @@
 package org.example.geometryproject.core;
 
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Polygon;
 
 import java.util.ArrayList;
@@ -21,7 +23,8 @@ public class Asteroid extends Polygon {
         for (Point2D point : hullPoints) {
             getPoints().addAll(point.getX(), point.getY());
         }
-        setFill(Color.GRAY);
+        Image texture = new Image("asteroid_pattern2.jpg");
+        setFill(new ImagePattern(texture));
     }
 
     private List<Point2D> generateAsteroidPoints(double centerX, double centerY, double size) {
