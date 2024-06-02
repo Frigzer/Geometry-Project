@@ -210,15 +210,18 @@ public class Game {
         // Wyznaczenie odległości od środka do skrzydeł
         double wingOffset = shipWidth / 2 - 5;
 
+        double leftWingOffset = wingOffset - 5;
+        double rightWingOffset = wingOffset + 5;
+
         // Pozycje wystrzałów z lewego i prawego skrzydła
         Point2D leftWing = new Point2D(
-                shipCenterX + wingOffset * Math.cos(angle + Math.PI / 2),
-                shipCenterY + wingOffset * Math.sin(angle + Math.PI / 2)
+                shipCenterX + leftWingOffset * Math.cos(angle + Math.PI / 2),
+                shipCenterY + leftWingOffset  * Math.sin(angle + Math.PI / 2)
         );
 
         Point2D rightWing = new Point2D(
-                shipCenterX + wingOffset * Math.cos(angle - Math.PI / 2),
-                shipCenterY + wingOffset * Math.sin(angle - Math.PI / 2)
+                shipCenterX + rightWingOffset  * Math.cos(angle - Math.PI / 2),
+                shipCenterY + rightWingOffset  * Math.sin(angle - Math.PI / 2)
         );
 
         Bullet leftBullet = new Bullet(leftWing.getX(), leftWing.getY(), velocity);
