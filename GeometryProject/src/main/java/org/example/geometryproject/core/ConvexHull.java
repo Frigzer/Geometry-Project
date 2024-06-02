@@ -28,7 +28,7 @@ public class ConvexHull {
 
         center = new Point(x0, y0);
 
-        setPosition(400, 550);
+
     }
 
     public ConvexHull(List<Point2D> points) {

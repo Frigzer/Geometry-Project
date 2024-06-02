@@ -88,6 +88,7 @@ public class Game {
 
         // Przykład użycia klasy ConvexHull do utworzenia kształtu statku
         convexHull = new ConvexHull(shipFile);
+        convexHull.setPosition((double) screenWidth / 2 - player.getFitWidth() / 2, screenHeight - player.getFitHeight());
 
         double[] hullDimensions = convexHull.getHullDimensions();
         double hullWidth = hullDimensions[0];
