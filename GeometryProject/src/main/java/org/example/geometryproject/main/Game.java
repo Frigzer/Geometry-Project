@@ -24,6 +24,7 @@ import org.example.geometryproject.controller.PauseMenuController;
 import org.example.geometryproject.core.Asteroid;
 import org.example.geometryproject.core.Bullet;
 import org.example.geometryproject.core.ConvexHull;
+import org.example.geometryproject.core.Explosion;
 import org.example.geometryproject.utilities.HullLine;
 
 
@@ -285,6 +286,11 @@ public class Game {
                 Asteroid asteroid = asteroids.get(j);
                 for (HullLine asteroidLine : asteroid.getConvexHull().getSides()) {
                     if (lineIntersectsCircle(asteroidLine, bullet.getPosition(), bullet.getRadius())) {
+                        double explosionX = bullet.getX(); // Ustawienie pozycji eksplozji
+                        double explosionY = bullet.getY(); // Ustawienie pozycji eksplozji
+                        Explosion explosion = new Explosion(explosionX, explosionY);
+                        root.getChildren().add(explosion);
+
                         root.getChildren().remove(bullet);
                         bullets.remove(i);
                         i--;

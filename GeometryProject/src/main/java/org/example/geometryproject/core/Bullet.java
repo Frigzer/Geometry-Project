@@ -25,4 +25,12 @@ public class Bullet extends Circle {
     public Point2D getPosition() {
         return new Point2D(getCenterX(), getCenterY());
     }
+
+    public double getX() {
+        return getCenterX();
+    }
+
+    public double getY() {
+        return getCenterY();
+    }
 }
