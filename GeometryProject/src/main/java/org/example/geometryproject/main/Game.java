@@ -286,8 +286,8 @@ public class Game {
                 Asteroid asteroid = asteroids.get(j);
                 for (HullLine asteroidLine : asteroid.getConvexHull().getSides()) {
                     if (lineIntersectsCircle(asteroidLine, bullet.getPosition(), bullet.getRadius())) {
-                        double explosionX = bullet.getX(); // Ustawienie pozycji eksplozji
-                        double explosionY = bullet.getY(); // Ustawienie pozycji eksplozji
+                        double explosionX = bullet.getX() - 25; // Ustawienie pozycji eksplozji
+                        double explosionY = bullet.getY() - 25; // Ustawienie pozycji eksplozji
                         Explosion explosion = new Explosion(explosionX, explosionY);
                         root.getChildren().add(explosion);
 

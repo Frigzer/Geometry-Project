@@ -33,4 +33,5 @@ public class Bullet extends Circle {
     public double getY() {
         return getCenterY();
     }
+
 }
