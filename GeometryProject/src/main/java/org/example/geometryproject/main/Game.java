@@ -363,8 +363,8 @@ public class Game {
         Text gameOverText = new Text("Game Over\n  Score: " + score);
         gameOverText.setFont(new Font("Arial", 50));
         gameOverText.setFill(Color.RED);
-        gameOverText.setX(275);
-        gameOverText.setY(275);
+        gameOverText.setX(screenWidth / 2.9);
+        gameOverText.setY(screenHeight / 2.2);
         root.getChildren().add(gameOverText);
 
         PauseTransition pause = new PauseTransition(Duration.seconds(4));
