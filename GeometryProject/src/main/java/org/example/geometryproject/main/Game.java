@@ -75,13 +75,13 @@ public class Game {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         root = new Pane();
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, screenWidth, screenHeight);
 
         // Ustawienie tła
         Image backgroundImage = new Image("earth.gif");
         ImageView backgroundImageView = new ImageView(backgroundImage);
-        backgroundImageView.setFitWidth(800);
-        backgroundImageView.setFitHeight(600);
+        backgroundImageView.setFitWidth(screenWidth);
+        backgroundImageView.setFitHeight(screenHeight);
         backgroundImageView.setPreserveRatio(false);
         root.getChildren().add(backgroundImageView);
 
@@ -397,6 +397,8 @@ public class Game {
             PauseMenuController controller = loader.getController();
             controller.setPrimaryStage(primaryStage);
             controller.setGameApplication(this);
+            controller.setSettings(settings);
+            controller.setScreenDimensions(screenWidth, screenHeight);
 
             pauseMenu.setVisible(false); // Na początku menu pauzy jest ukryte
             root.getChildren().add(pauseMenu);

@@ -35,6 +35,18 @@
     <Label text="Move Right"/>
     <TextField fx:id="moveRightKey" text="D"/>
 
+    <Label text="Window Size"/>
+    <ComboBox fx:id="windowSizeComboBox">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="800x600"/>
+                <String fx:value="1024x768"/>
+                <String fx:value="1280x720"/>
+                <String fx:value="1920x1080"/>
+            </FXCollections>
+        </items>
+    </ComboBox>
+
     <Button text="Save" onAction="#saveSettings"/>
     <Button text="Back" onAction="#backToMainMenu"/>
 </VBox>

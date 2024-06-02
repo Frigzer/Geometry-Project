@@ -11,10 +11,6 @@ import org.example.geometryproject.main.Settings;
 import java.io.IOException;
 
 public class MainApplication extends Application {
-
-    private static final int screenWidth = 800;
-    private static final int screenHeight = 600;
-
     private Settings settings = new Settings();
 
 
@@ -35,9 +31,9 @@ public class MainApplication extends Application {
             MainMenuController controller = loader.getController();
             controller.setPrimaryStage(primaryStage);
             controller.setSettings(settings);
-            controller.setScreenDimensions(screenWidth, screenHeight);
+            controller.setScreenDimensions(settings.getScreenWidth(), settings.getScreenHeight());
 
-            Scene scene = new Scene(root, screenWidth, screenHeight);
+            Scene scene = new Scene(root, settings.getScreenWidth(), settings.getScreenHeight());
             primaryStage.setScene(scene);
             primaryStage.setTitle("Main Menu");
             primaryStage.setResizable(false);

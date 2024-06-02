@@ -50,8 +50,9 @@ public class MainMenuController {
             SettingsMenuController controller = loader.getController();
             controller.setPrimaryStage(primaryStage);
             controller.setSettings(settings);
+            controller.setScreenDimensions(screenWidth, screenHeight);
 
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, screenWidth, screenHeight);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Settings");
         } catch (IOException e) {
