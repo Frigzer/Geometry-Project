@@ -88,7 +88,8 @@ public class Game {
 
         // Przykład użycia klasy ConvexHull do utworzenia kształtu statku
         convexHull = new ConvexHull(shipFile);
-        convexHull.setPosition((double) screenWidth / 2 - player.getFitWidth() / 2, screenHeight - player.getFitHeight());
+        convexHull.setPosition((double) screenWidth / 2 - convexHull.getCenter().getX(), screenHeight - convexHull.getCenter().getY() * 2);
+
 
         double[] hullDimensions = convexHull.getHullDimensions();
         double hullWidth = hullDimensions[0];
@@ -100,6 +101,8 @@ public class Game {
         player.setFitWidth(hullWidth); // Ustawienie szerokości statku na podstawie szerokości otoczki wypukłej
         player.setFitHeight(hullHeight); // Ustawienie wysokości statku na podstawie wysokości otoczki wypukłej
         //player.setPreserveRatio(true); // Zachowanie proporcji obrazu
+
+
 
         // Ustawienie początkowej pozycji statku
         player.setLayoutX((double) screenWidth / 2 - player.getFitWidth() / 2); // Centrowanie statku na środku

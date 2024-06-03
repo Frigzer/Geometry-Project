@@ -43,6 +43,10 @@ public class ConvexHull {
 
     }
 
+    public Point2D getCenter() {
+        return center;
+    }
+
 
     public void calculateJarvis() {
         if (points.size() < 3)
