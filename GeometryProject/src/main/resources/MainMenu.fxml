@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.geometryproject.controller.MainMenuController" spacing="10" alignment="CENTER">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.geometryproject.controller.MainMenuController" spacing="10" alignment="CENTER" stylesheets="styles.css">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>

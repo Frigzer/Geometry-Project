@@ -34,6 +34,7 @@ public class MainApplication extends Application {
             controller.setScreenDimensions(settings.getScreenWidth(), settings.getScreenHeight());
 
             Scene scene = new Scene(root, settings.getScreenWidth(), settings.getScreenHeight());
+            //scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setTitle("Main Menu");
             primaryStage.setResizable(false);
