@@ -10,6 +10,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -28,6 +30,7 @@ import org.example.geometryproject.core.Explosion;
 import org.example.geometryproject.utilities.HullLine;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -60,6 +63,8 @@ public class Game {
     private int screenWidth;
     private int screenHeight;
 
+    private MediaPlayer mediaPlayer;
+
     public Game(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -85,6 +90,16 @@ public class Game {
         backgroundImageView.setFitHeight(screenHeight);
         backgroundImageView.setPreserveRatio(false);
         root.getChildren().add(backgroundImageView);
+
+
+        //Ustawienie muzyki
+        String path = "src/main/resources/main.mp3";
+        Media media = new Media(new File(path).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.play();
+
+
 
         // Przykład użycia klasy ConvexHull do utworzenia kształtu statku
         convexHull = new ConvexHull(shipFile);
