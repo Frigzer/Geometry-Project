@@ -25,7 +25,7 @@ public class MainApplication extends Application {
 
     private void showMainMenu(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainMenu.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainMenu.fxml"));
             Pane root = loader.load();
 
             MainMenuController controller = loader.getController();

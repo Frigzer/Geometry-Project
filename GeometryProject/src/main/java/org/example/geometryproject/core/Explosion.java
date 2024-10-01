@@ -10,7 +10,7 @@ import javafx.util.Duration;
 public class Explosion extends ImageView {
 
     public Explosion(double x, double y) {
-        super(new Image("explosion.gif"));
+        super(new Image("textures/explosion.gif"));
         setX(x);
         setY(y);
         setFitWidth(50); // Ustaw rozmiar eksplozji, aby pasował do Twojej gry

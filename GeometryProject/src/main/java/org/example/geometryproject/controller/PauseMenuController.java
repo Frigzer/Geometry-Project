@@ -43,7 +43,7 @@ public class PauseMenuController {
     @FXML
     private void backToMainMenu() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainMenu.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainMenu.fxml"));
             Pane root = loader.load();
 
             MainMenuController controller = loader.getController();

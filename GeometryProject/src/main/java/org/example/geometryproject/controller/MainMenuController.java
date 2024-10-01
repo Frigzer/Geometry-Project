@@ -3,7 +3,6 @@ package org.example.geometryproject.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.example.geometryproject.main.Game;
@@ -45,7 +44,7 @@ public class MainMenuController {
     @FXML
     private void openSettings() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SettingsMenu.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SettingsMenu.fxml"));
             Pane root = loader.load();
 
             SettingsMenuController controller = loader.getController();

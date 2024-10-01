@@ -3,8 +3,6 @@ package org.example.geometryproject.core;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 /*
 public class Bullet extends Circle {
@@ -45,7 +43,7 @@ public class Bullet extends ImageView {
     private Point2D velocity;
 
     public Bullet(double x, double y, Point2D velocity) {
-        super(new Image("energyball.png")); // Załadowanie obrazu pocisku
+        super(new Image("textures/energyball.png")); // Załadowanie obrazu pocisku
         this.velocity = velocity;
         setX(x);
         setY(y);

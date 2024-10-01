@@ -84,7 +84,7 @@ public class Game {
         Scene scene = new Scene(root, screenWidth, screenHeight);
 
         // Ustawienie tła
-        Image backgroundImage = new Image("earth.gif");
+        Image backgroundImage = new Image("textures/earth.gif");
         ImageView backgroundImageView = new ImageView(backgroundImage);
         backgroundImageView.setFitWidth(screenWidth);
         backgroundImageView.setFitHeight(screenHeight);
@@ -93,11 +93,11 @@ public class Game {
 
 
         //Ustawienie muzyki
-        String path = "src/main/resources/main.mp3";
+        String path = "src/main/resources/music/main.mp3";
         Media media = new Media(new File(path).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaPlayer.setVolume(0.5);
+        //mediaPlayer.setVolume(0.5);
         mediaPlayer.play();
 
 
@@ -112,7 +112,7 @@ public class Game {
         double hullHeight = hullDimensions[1];
 
         // Załadowanie obrazu statku
-        Image shipImage = new Image("terran_wraith_1.png");
+        Image shipImage = new Image("textures/terran_wraith_1.png");
         player = new ImageView(shipImage);
         player.setFitWidth(hullWidth); // Ustawienie szerokości statku na podstawie szerokości otoczki wypukłej
         player.setFitHeight(hullHeight); // Ustawienie wysokości statku na podstawie wysokości otoczki wypukłej
@@ -195,7 +195,7 @@ public class Game {
         timer.start();
 
         // Ustawienie niestandardowego kursora
-        Image crosshairImage = new Image("crosshair.png");
+        Image crosshairImage = new Image("textures/crosshair.png");
         scene.setCursor(new ImageCursor(crosshairImage, crosshairImage.getWidth() / 2, crosshairImage.getHeight() / 2));
 
         primaryStage.setScene(scene);
@@ -420,7 +420,7 @@ public class Game {
 
     private void addPauseMenu() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/PauseMenu.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PauseMenu.fxml"));
             pauseMenu = loader.load();
 
             PauseMenuController controller = loader.getController();

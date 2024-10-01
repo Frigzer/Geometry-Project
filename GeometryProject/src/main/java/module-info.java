@@ -23,4 +23,9 @@ module org.example.geometryproject {
     opens org.example.geometryproject.utilities to java.naming, javafx.controls, javafx.fxml, javafx.graphics;
     exports org.example.geometryproject.main;
     opens org.example.geometryproject.main to java.naming, javafx.controls, javafx.fxml, javafx.graphics;
+
+    opens css;
+    opens fxml;
+    opens music;
+    opens textures;
 }
