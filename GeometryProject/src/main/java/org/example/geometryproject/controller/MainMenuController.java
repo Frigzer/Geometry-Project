@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import org.example.geometryproject.main.Game;
 import org.example.geometryproject.main.Settings;
@@ -11,6 +14,11 @@ import org.example.geometryproject.main.Settings;
 import java.io.IOException;
 
 public class MainMenuController {
+
+    @FXML
+    private MediaView backgroundVideo;
+    @FXML
+    private Pane pane;
 
     private Stage primaryStage;
     private Settings settings;
@@ -28,6 +36,24 @@ public class MainMenuController {
     public void setScreenDimensions(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+
+        pane.setPrefSize(screenWidth, screenHeight);
+
+        String videoPath = getClass().getResource("/textures/main_menu.mp4").toExternalForm();
+
+        // Tworzenie obiektu Media i MediaPlayer
+        Media media = new Media(videoPath);
+
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+        // Ustawienie MediaPlayer w MediaView
+        backgroundVideo.setMediaPlayer(mediaPlayer);
+        backgroundVideo.setPreserveRatio(false);
+        backgroundVideo.setFitWidth(screenWidth);
+        backgroundVideo.setFitHeight(screenHeight);
+
+        mediaPlayer.setMute(true);
+        mediaPlayer.play();
     }
 
     @FXML
