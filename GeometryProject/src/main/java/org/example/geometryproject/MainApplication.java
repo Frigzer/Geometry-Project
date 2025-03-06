@@ -15,7 +15,7 @@ import org.example.geometryproject.main.Settings;
 
 import java.io.IOException;
 
-public class MainApplication extends Application { //main function
+public class MainApplication extends Application {
     private Settings settings = new Settings();
 
 
